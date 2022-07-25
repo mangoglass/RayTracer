@@ -1,3 +1,7 @@
+# Custom for project
+.vscode
+*.ppm
+
 # Prerequisites
 *.d
 
