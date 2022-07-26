@@ -3,6 +3,7 @@
 #include "vec3.h"
 
 #include <iostream>
+#include <fstream>
 
 double hit_sphere(const point3& center, double radius, const ray& r) {
 	vec3 oc = r.origin() - center;
@@ -51,7 +52,8 @@ int main()
 
 	// Render
 
-	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+	std::ofstream imageStream("image.ppm");
+	imageStream << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
 	for (int j = image_height; j >= 0; j--) 
 	{
@@ -63,9 +65,12 @@ int main()
 			auto v = double(j) / (image_height-1);
 			ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
 			color pixel_color = ray_color(r);
-			write_color(std::cout, pixel_color);
+			write_color(imageStream, pixel_color);
 		}
 		
 	}
+
+	imageStream.flush();
+	imageStream.close();
 	std::cerr << "\nDone!\n";
 }
