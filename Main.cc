@@ -1,19 +1,15 @@
+#include "utility.h"
 #include "color.h"
-#include "ray.h"
-#include "vec3.h"
+#include "hittable_list.h"
 #include "sphere.h"
 
 #include <iostream>
 #include <fstream>
 
-color ray_color(const ray& r) {
-	//sphere hit
-	hit_record hr;
-	auto s = sphere(point3(0, 0, -1), 0.5);
-	auto hit = s.hit(r, 0.0, 10.0, hr);
-	if (hit) {
-		vec3 N = unit_vector(hr.p - vec3(0,0,-1));
-		return 0.5*color(N.x()+1, N.y()+1, N.z()+1);
+color ray_color(const ray& r, const hittable& world) {
+	hit_record rec;
+	if (world.hit(r, 0, infinity, rec)) {
+		return 0.5 * (rec.normal + color(1,1,1));
 	}
 
 	//background hit
@@ -25,9 +21,16 @@ color ray_color(const ray& r) {
 int main() 
 {
 	// Image 
+
 	const auto aspect_ratio = 16.0 / 9.0;
 	const int image_width = 400;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
+
+	// World
+
+	hittable_list world;
+	world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
+	world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
 
 	// Camera
 
@@ -54,7 +57,7 @@ int main()
 			auto u = double(i) / (image_width-1);
 			auto v = double(j) / (image_height-1);
 			ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-			color pixel_color = ray_color(r);
+			color pixel_color = ray_color(r, world);
 			write_color(imageStream, pixel_color);
 		}
 		
