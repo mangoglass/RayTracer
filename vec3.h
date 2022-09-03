@@ -40,6 +40,12 @@ class vec3 {
         double length() const { return sqrt(length_squared()); }
         double length_squared() const { return e[0]*e[0] + e[1]*e[1] + e[2]*e[2]; }
 
+        bool near_zero() const {
+            // Returns true if all dimentions of the vector is close to zero
+            const auto s = 1e-8;
+            return (fabs(e[0]) < s) && (fabs(e[0]) < s) && (fabs(e[0]) < s);
+        }
+
         inline static vec3 random() {
             return vec3(random_double(), random_double(), random_double());
         }
