@@ -118,6 +118,10 @@ inline vec3 random_in_hemisphere(const vec3& normal) {
     else return -in_unit_sphere;                                    // make it same hemisphere as normal
 }
 
+inline vec3 reflect(const vec3& v, const vec3& n) {
+    return v - 2*dot(v,n)*n;
+}
+
 // Type aliases for vec3
 using point3 = vec3;    // 3D point
 using color = vec3;     // RGB color
