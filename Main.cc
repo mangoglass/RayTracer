@@ -36,7 +36,6 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 int main() {
 	// Image 
 
-	const auto vertical_fov = 90.0;
 	const auto aspect_ratio = 16.0 / 9.0;
 	const int image_width = 400;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
@@ -45,7 +44,6 @@ int main() {
 
 	// World
 
-	auto R = cos(pi / 4);
 	hittable_list world;
 
 	auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
@@ -61,7 +59,14 @@ int main() {
 
 	// Camera
 
-	camera cam(point3(-2, 2, 1), point3(0, 0, -1), vec3(0, 1, 0), vertical_fov, aspect_ratio);
+	const point3 look_from(3, 3, 2);
+	const point3 look_at(0, 0, -1);
+	const vec3 up(0, 1, 0);
+	const auto vertical_fov = 20.0;
+	const auto dist_to_focus = (look_from - look_at).length();
+	const auto aperture = 0.5; 
+
+	camera cam(look_from, look_at, up, vertical_fov, aspect_ratio, aperture, dist_to_focus);
 
 	// Render
 
