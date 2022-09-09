@@ -33,8 +33,7 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 	return (1.0 - t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
-int main() 
-{
+int main() {
 	// Image 
 
 	const auto aspect_ratio = 16.0 / 9.0;
@@ -48,13 +47,14 @@ int main()
 	hittable_list world;
 
 	auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-	auto material_center = make_shared<lambertian>(color(0.7, 0.3, 0.3));
-	auto material_left   = make_shared<metal>(color(0.8, 0.8, 0.8), 0.3);
+	auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
+	auto material_left   = make_shared<dielectric>(1.5);
 	auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 1.0);
 
 	world.add(make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
 	world.add(make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, material_center));
 	world.add(make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, material_left));
+	world.add(make_shared<sphere>(point3(-1.0,    0.0, -1.0),  -0.4, material_left));
 	world.add(make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
 
 	// Camera
@@ -66,12 +66,10 @@ int main()
 	std::ofstream imageStream("image.ppm");
 	imageStream << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-	for (int j = image_height; j >= 0; j--) 
-	{
+	for (int j = image_height; j >= 0; j--) {
 		auto progress = double(100 * (image_height - j)) / image_height;
 		std::cerr << "\rProgress: " << progress << "%    " << std::flush;
-		for (int i = 0; i < image_width; i++)
-		{
+		for (int i = 0; i < image_width; i++) {
 			color pixel_color(0, 0, 0);
 			for (int s = 0; s < samples_per_pixel; s++) {
 				auto u = (i + random_double()) / (image_width - 1);
@@ -82,7 +80,6 @@ int main()
 
 			write_color(imageStream, pixel_color, samples_per_pixel);
 		}
-		
 	}
 
 	imageStream.flush();
